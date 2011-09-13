@@ -1,0 +1,5 @@
+name = Misc Hooks
+description = Misc hooks and stuff to customize drupal
+package = Markup
+files[] = misc_hooks.module
+core = 7.x
