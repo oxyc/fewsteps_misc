@@ -60,3 +60,51 @@ function misc_hooks_node_view_alter(&$build) {
 function misc_hooks_menu_alter(&$items) {
   $items['node/%node/translate']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
 }
+
+/**
+ * Add custom view mdoes to files
+ */
+function misc_hooks_entity_info_alter(&$entity_info) {
+
+  //Not sure if it's still an issue, but a previous commenter noted that Media module only recognizes view modes with the prefix media_. Also, as you can see by the entity type 'file', this is for after the switch-to-file-entity patch.
+  $entity_info['file']['view modes']['media_slideshow'] = array(
+    'label' => t('Slideshow'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['file']['view modes']['media_colorbox'] = array(
+    'label' => t('Colorbox'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['file']['view modes']['media_wide'] = array(
+    'label' => t('Wide'),
+    'custom settings' => TRUE,
+  );
+}
+
+/**
+ * Add a stylesheet to the admin theme
+ */
+function misc_hooks_preprocess_page(&$variables) {
+  global $theme_info;
+
+  // If the page load is for the admin theme
+  if ($theme_info->name == variable_get('admin_theme')) {
+    stylus_add_stylus(drupal_get_path('theme', 'base') . '/stylesheets/stylus/seven.styl', array(
+      'css_dir' => drupal_get_path('theme', 'base') . '/stylesheets/css',
+      'group' => CSS_THEME,
+    ));
+  }
+}
+
+/**
+ * Implements hook_page_alter().
+ *
+ * Hides the administration toolbar if the administration menu is available
+ */
+function misc_hooks_page_alter(&$page) {
+  // Hide Toolbar for those who can access the Admin Menu.
+  if (user_access('access administration menu') && !empty($page['page_top']['toolbar'])) {
+    $page['page_top']['toolbar']['#access'] = FALSE;
+  }
+}
+
