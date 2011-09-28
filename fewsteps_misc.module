@@ -3,11 +3,12 @@
 /**
  * 
  */
-function misc_hooks_form_alter(&$form, &$form_state, $form_id) {
+function fewsteps_misc_form_alter(&$form, &$form_state, $form_id) {
   // Allow long titles
   if(isset($form['module']['#value']) && $form['module']['#value'] == "block") {
     $form['settings']['title']['#maxlength'] = 128;
   }
+  /*
   switch($form['#form_id']) {
     case 'contact_site_form':
       $form['subject']['#type'] = "hidden";
@@ -22,11 +23,11 @@ function misc_hooks_form_alter(&$form, &$form_state, $form_id) {
       unset($form['mail']['#default_value']);
       unset($form['message']['#default_value']);
       break;
-  }
+  }*/
 }
 
 // Remove the read more link
-function misc_hooks_node_view($node, $view_mode, $langcode) {
+function fewsteps_misc_node_view($node, $view_mode, $langcode) {
   
   if ($view_mode == 'teaser' && isset($node->content['links']['node']['#links']['node-readmore'])) {
 
@@ -42,7 +43,7 @@ function misc_hooks_node_view($node, $view_mode, $langcode) {
 }
 
 // Add node Edit, Delete and Translate as contextual links
-function misc_hooks_contextual_links_view_alter(&$element, $items) {
+function fewsteps_misc_contextual_links_view_alter(&$element, $items) {
   foreach(array('node-edit', 'node-delete', 'node-translate') as $node_item) {
     if(isset($element['#links'][$node_item])) {
       $element['#links'][$node_item]['query']['destination'] = 'frontpage';
@@ -51,20 +52,20 @@ function misc_hooks_contextual_links_view_alter(&$element, $items) {
 }
 
 //
-function misc_hooks_node_view_alter(&$build) {
+function fewsteps_misc_node_view_alter(&$build) {
   if (!empty($build['#node']->nid)) {
     $build['#contextual_links']['node'] = array('node', array($build['#node']->nid));
   }
 }
 
-function misc_hooks_menu_alter(&$items) {
+function fewsteps_misc_menu_alter(&$items) {
   $items['node/%node/translate']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
 }
 
 /**
  * Add custom view mdoes to files
  */
-function misc_hooks_entity_info_alter(&$entity_info) {
+function fewsteps_misc_entity_info_alter(&$entity_info) {
 
   //Not sure if it's still an issue, but a previous commenter noted that Media module only recognizes view modes with the prefix media_. Also, as you can see by the entity type 'file', this is for after the switch-to-file-entity patch.
   $entity_info['file']['view modes']['media_slideshow'] = array(
@@ -84,7 +85,7 @@ function misc_hooks_entity_info_alter(&$entity_info) {
 /**
  * Add a stylesheet to the admin theme
  */
-function misc_hooks_preprocess_page(&$variables) {
+function fewsteps_misc_preprocess_page(&$variables) {
   global $theme_info;
 
   // If the page load is for the admin theme
@@ -101,7 +102,7 @@ function misc_hooks_preprocess_page(&$variables) {
  *
  * Hides the administration toolbar if the administration menu is available
  */
-function misc_hooks_page_alter(&$page) {
+function fewsteps_misc_page_alter(&$page) {
   // Hide Toolbar for those who can access the Admin Menu.
   if (user_access('access administration menu') && !empty($page['page_top']['toolbar'])) {
     $page['page_top']['toolbar']['#access'] = FALSE;

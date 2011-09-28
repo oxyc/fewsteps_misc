@@ -136,6 +136,7 @@ function site_settings_settings_form_submit($form, &$form_state) {
       foreach ($value as $site_settings_key => $site_settings_value) {
         variable_set($site_settings_key, $site_settings_value);
       }
+      unset($form_state['values'][$key]);
     }
   }
 }

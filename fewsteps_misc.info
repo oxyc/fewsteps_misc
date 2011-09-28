@@ -1,0 +1,5 @@
+name = "Fewsteps"
+description = "Settings and features for fewsteps customers"
+
+core = 7.x
+package = Fewsteps
