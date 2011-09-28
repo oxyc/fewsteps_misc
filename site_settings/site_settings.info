@@ -1,0 +1,6 @@
+name = "Site settings page"
+description = "A unified site settings page for clients to use"
+
+core = 7.x
+
+configure = admin/config/system/site_settings

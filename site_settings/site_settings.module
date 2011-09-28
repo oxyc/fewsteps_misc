@@ -1,0 +1,100 @@
+<?php
+
+define('SITE_SETTINGS_PERMISSION', 'administer site_settings');
+
+function site_settings_menu() {
+  $items = array();
+
+  $items['admin/config/system/site_settings'] = array(
+    'title' => 'Site settings',
+    'description' => 'Administer site settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('site_settings_settings'),
+    'access arguments' => array(SITE_SETTINGS_PERMISSION),
+    'file' => 'site_settings.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function site_settings_permission() {
+  return array(
+    SITE_SETTINGS_PERMISSION => array(
+      'title' => t('Administer site settings'),
+      'description' => t('Access the site settings page.'),
+    ),
+  );
+}
+
+/**
+ * Blocks
+ */
+
+function site_settings_block_info() {
+  $blocks['site_settings_contact'] = array(
+    'info'    => t('Contact information'),
+    'status'  => FALSE,
+    'weight'  => 0,
+    'cache'   => DRUPAL_CACHE_GLOBAL,
+  );
+  return $blocks;
+}
+
+function site_settings_contact_get() {
+  static $settings;
+  if (empty($settings)) {
+    $settings = variable_get('site_settings_contact', array(
+      'fn' => array(
+        'fn' => NULL, 
+        'org' => NULL,
+      ), 
+      'adr' => array(
+        'street-address' => NULL, 
+        'locality' => NULL,
+        'postal-code' => NULL,
+        'country-name' => NULL,
+      ),
+      'tel' => NULL,
+    ));
+  }
+  return $settings;
+}
+
+function site_settings_block_view($delta = '') {
+  switch($delta) {
+    case 'site_settings_contact':
+      $settings = site_settings_contact_get();
+      $email = module_exists('invisimail') 
+        ? invisimail_encode_email(variable_get('site_mail', ''), 'html_entities', array('link' => TRUE))
+        : variable_get('site_mail', NULL);
+
+      $block['subject'] = NULL;
+      $block['content'] = array(
+        '#markup' => theme('site_settings_contact', array_merge(
+          $settings, array(
+            'url' => url('<front>', array('absolute' => TRUE)),
+            'email' => $email,
+          )
+        )),
+      );
+
+      break;
+  }
+  return $block;
+}
+
+function site_settings_theme() {
+  return array(
+    'site_settings_contact' => array(
+      'template' => 'site_settings_contact',
+      'variables' => array(
+        'fn' => NULL,
+        'adr' => NULL,
+        'tel' => NULL,
+        'url' => NULL,
+        'email' => NULL,
+      ),
+    ),
+  );
+}
