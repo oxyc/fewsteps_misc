@@ -1,0 +1,11 @@
+name = "Fewsteps views gallery"
+description = "Gallery view leveraging the galleria library"
+dependencies[] = views
+
+core = 7.x
+package = Fewsteps
+
+files[] = views_fewsteps_gallery.module
+files[] = views_fewsteps_gallery.theme.inc
+files[] = views_fewsteps_gallery.views.inc
+files[] = views_fewsteps_gallery_plugin_style_gallery.inc

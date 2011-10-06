@@ -5,14 +5,14 @@
  */
 function fewsteps_misc_form_alter(&$form, &$form_state, $form_id) {
   // Allow long titles
-  if(isset($form['module']['#value']) && $form['module']['#value'] == "block") {
+  /*if(isset($form['module']['#value']) && $form['module']['#value'] == "block") {
     $form['settings']['title']['#maxlength'] = 128;
-  }
-  /*
+  }*/
+
   switch($form['#form_id']) {
     case 'contact_site_form':
       $form['subject']['#type'] = "hidden";
-      $form['subject']['#value'] = "Kontaktformulär";
+      //$form['subject']['#value'] = "Kontaktformulär";
       $form['copy']['#type'] = "hidden";
       $form['copy']['#value'] = 0;
       $form['name']['#attributes']['placeholder'] = t('Name');
@@ -23,7 +23,7 @@ function fewsteps_misc_form_alter(&$form, &$form_state, $form_id) {
       unset($form['mail']['#default_value']);
       unset($form['message']['#default_value']);
       break;
-  }*/
+  }
 }
 
 // Remove the read more link
@@ -67,7 +67,6 @@ function fewsteps_misc_menu_alter(&$items) {
  */
 function fewsteps_misc_entity_info_alter(&$entity_info) {
 
-  //Not sure if it's still an issue, but a previous commenter noted that Media module only recognizes view modes with the prefix media_. Also, as you can see by the entity type 'file', this is for after the switch-to-file-entity patch.
   $entity_info['file']['view modes']['media_slideshow'] = array(
     'label' => t('Slideshow'),
     'custom settings' => TRUE,
@@ -78,6 +77,10 @@ function fewsteps_misc_entity_info_alter(&$entity_info) {
   );
   $entity_info['file']['view modes']['media_wide'] = array(
     'label' => t('Wide'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['file']['view modes']['media_gallery'] = array(
+    'label' => t('Gallery'),
     'custom settings' => TRUE,
   );
 }
@@ -109,3 +112,17 @@ function fewsteps_misc_page_alter(&$page) {
   }
 }
 
+ 
+/**
+ * Implements hook_css_alter().
+ * http://www.metaltoad.com/blog/drupal-7-taking-control-css-and-js-aggregation
+ */
+function fewsteps_misc_css_alter(&$css) {
+  uasort($css, 'drupal_sort_css_js');
+  $i = 0;
+  foreach ($css as $name => $style) {
+    $css[$name]['weight'] = $i++;
+    $css[$name]['group'] = CSS_DEFAULT;
+    $css[$name]['every_page'] = FALSE;
+  }
+}

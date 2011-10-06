@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function views_fewsteps_gallery_theme($existing, $type, $theme, $path) {
+  return array(
+    'views_fewsteps_gallery_main_section' => array(
+      'variables' => array('id' => NULL, 'hidden_elements' => NULL, 'plugin' => NULL),
+      'file' => 'views_fewsteps_gallery.theme.inc',
+    ),
+    'views_fewsteps_gallery_image' = array(
+      'variables' => array(
+        'item' => array(),
+        'entity_id' => NULL,
+        'field' => array(),
+        'display_settings' => array(),
+        'langcode' => NULL,
+        'path' => NULL,
+        'title' => NULL,
+        'file' => 'views_fewsteps_gallery.theme.inc',
+      ),
+    ),
+  );
+}
+
+function views_fewsteps_gallery_views_api() {
+  return array(
+    'api' => '3.0-alpha1',
+  );
+}
+
+function views_fewsteps_gallery_entity_info_alter(&$entity_info) {
+  //$entity_info['file']['view modes']['views_fewsteps_gallery_
+}
+
+/**
+ * Views fewsteps_gallery: preprocess function for the fewsteps_gallery.
+ */
+function template_preprocess_views_fewsteps_gallery(&$vars) {
+  $options = $vars['options'];
+  if (isset($options['fewsteps_gallery_type'])) {
+    if (in_array($options['fewsteps_gallery_type'], array('cloudcarousel', 'cycle', 'galleria', 'imageflow', 'nivoslider'))) {
+      $options['mode'] = 'views_fewsteps_gallery_' . $options['fewsteps_gallery_type'];
+    }
+  }
+  else $options['fewsteps_gallery_type'] = NULL;
+
+  $vars['fewsteps_gallery'] = theme($options['fewsteps_gallery_type'], array('view' => $vars['view'], 'options' => $options, 'rows' => $vars['rows'], 'title' => $vars['title']));
+
+  _views_fewsteps_gallery_add_js($options, 'views-fewsteps-gallery-' . $options['type'] . '-' . $vars['id']);
+
+}
+
+function _views_fewsteps_gallery_add_js($options, $id) {
+
+  // Add the gallery script
+  $plugin_path = libraries_get_path('galleria');
+  drupal_add_js($plugin_path . '/galleria.min.js');
+
+  // Add the theme script
+  $theme_path = $plugin_path . '/themes/' . $options['skin'] . '/galleria.' . $options['skin'] . '.js';
+  drupal_add_js(base_path() . $theme_path);
+
+  $module_path = drupal_get_path('module', 'views_fewsteps_gallery');
+  $settings = array(
+  );
+
+  // Pass javascript settings
+  drupal_add_js(array('viewsFewstepsGalleryGalleria' => array($id => $settings)), 'setting');
+
+  // Add the init script
+  drupal_add_js($module_path . '/js/views_fewsteps_gallery_galleria.js');
+}
+
+// function template_preprocess_views_fewsteps_gallery(&$vars) 
+// function views_fewsteps_gallery_theme($existing, $type, $theme, $path) {
